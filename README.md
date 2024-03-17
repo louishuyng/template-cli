@@ -12,10 +12,23 @@ To install the CLI globally, run the following command:
 npm install -g
 ```
  
+### Without Arguments
 To run the CLI, run the following command:
-```
+```bash
 template-cli
 ```
+### With Arguments
+To run the CLI with arguments, run the following command:
+```
+template-cli <template-name> --input <input>
+```
+
+For example:
+```bash
+template-cli new-micro-service --input test
+```
+
+- `<input>` is the name of input-set located in `input-sets/<template-name>/<input>.json`
 
 ## Extending New Templates
 

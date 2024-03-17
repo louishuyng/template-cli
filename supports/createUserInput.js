@@ -6,9 +6,10 @@ export class CreateUserInput {
       const { default: generateData } = await import(generateDataPath);
       return generateData(answers);
     } catch (_error) {
-      throw new Error(
+      console.error(
         `No generateData function found for ${this.templateChoice}. Please create one in ${generateDataPath}`
       );
+      process.exit(1);
     }
   }
 }
