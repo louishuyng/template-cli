@@ -28,7 +28,7 @@ For example:
 template-cli new-micro-service --input test
 ```
 
-- `<input>` is the name of input-set located in `input-sets/<template-name>/<input>.json`
+- `<input>` is the name of input-set located in `cores/input-sets/<template-name>/<input>.json`
 
 ## Extending New Templates
 
@@ -42,10 +42,10 @@ To make the template work, you will need to do the following:
 3. [Inside template you can replace the placeholders with the answers from the struct (required)](#3-inside-template-you-can-replace-the-placeholders-with-the-answers-from-the-struct)
 
 ### 1. Create list of questions
-Create a new file in the `questions/<template-name>/index.js` file. The file should default export an array of questions.
+Create a new file in the `cores/questions/<template-name>/index.js` file. The file should default export an array of questions.
 
 For example:
-`questions/new-micro-service/index.js`
+`cores/questions/new-micro-service/index.js`
 ```javascript
 const NewMicroServiceQuestion = [
   {
@@ -64,11 +64,11 @@ export default NewMicroServiceQuestion;
 
 ### 2. Create a struct to hold the answers to the questions
 
-#### Firstly, create an **answer struct** in the `structs/<template-name>/answers.js` file.
+#### Firstly, create an **answer struct** in the `cores/structs/<template-name>/answers.js` file.
 > Purpose of this struct is to hold the answers in a structured way.
 
 Example of the struct is shown below.
-`structs/new-micro-service/answers.js`
+`cores/structs/new-micro-service/answers.js`
 ```javascript
 class Answers {
   constructor(answers = {}) {
@@ -84,11 +84,11 @@ export default Answers;
 ```
 
 
-#### Secondly, create a **handleBar function** in the `structs/<template-name>/handleBar.js` file.
+#### Secondly, create a **handleBar function** in the `cores/structs/<template-name>/handleBar.js` file.
 > Purpose of this function is to map the answers struct to json that handlebars can use.
 
 Example of the generateData function is shown below.
-`structs/new-micro-service/handleBar.js`
+`cores/structs/new-micro-service/handleBar.js`
 ```javascript
 function generateData(answers) {
   return {
@@ -111,4 +111,3 @@ class {{name}} { // This will be replaced by handlebars
   }
 }
 ```
-

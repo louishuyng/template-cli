@@ -1,7 +1,7 @@
 import { Log } from './log.js';
 
 const createAnswerStruct = async (templateChoice, answers = {}) => {
-  const answerPath = `../structs/${templateChoice}/answers.js`;
+  const answerPath = `../cores/structs/${templateChoice}/answers.js`;
 
   try {
     const { default: Answer } = await import(answerPath);

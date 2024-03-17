@@ -12,15 +12,16 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // SUPPORTS
 import createDirectoryContents from './supports/createDirectoryContents.js';
 import { createAnswerStruct } from './supports/createAnswerStruct.js';
+import { ArgumentParser } from './supports/argumentsParser.js';
+import { messageGeneratingWrap } from './supports/messagesWrap.js';
+import { Log } from './supports/log.js';
 
 // STRUCTS
 import { CreateUserInput } from './supports/createUserInput.js';
 
 // QUESTIONS
-import { BaseQuestion } from './questions/base.question.js';
-import { ArgumentParser } from './supports/argumentsParser.js';
-import { messageGeneratingWrap } from './supports/messagesWrap.js';
-import { Log } from './supports/log.js';
+import { BaseQuestion } from './cores/questions/base.question.js';
+
 const CHOICES = fs.readdirSync(`${__dirname}/templates`);
 
 const QUESTIONS = [
@@ -54,8 +55,8 @@ function runningWithoutArguments() {
     const destination = answers['destination'];
     fs.mkdirSync(`${CURR_DIR}/${destination}`);
 
-    extendQuestions(templateChoice, async answers => {
-      const data = await CreateUserInput.call(templateChoice, answers);
+    extendQuestions(templateChoice, async answersStruct => {
+      const data = await CreateUserInput.call(templateChoice, answersStruct);
 
       messageGeneratingWrap(destination, () => {
         createDirectoryContents(templatePath, destination, data);
@@ -66,13 +67,13 @@ function runningWithoutArguments() {
 
 async function extendQuestions(templateChoice, callback) {
   try {
-    const questionsPath = `./questions/${templateChoice}/index.js`;
+    const questionsPath = `./cores/questions/${templateChoice}/index.js`;
 
     const { default: questionsForTemplate } = await import(questionsPath);
 
-    inquirer.prompt(questionsForTemplate).then(async answers => {
+    inquirer.prompt(questionsForTemplate).then(async extendAnswers => {
       // We want to make answer to be more struct depends on the template
-      const answersStruct = await createAnswerStruct(templateChoice, answers);
+      const answersStruct = await createAnswerStruct(templateChoice, extendAnswers);
 
       callback(answersStruct);
     });
@@ -92,7 +93,7 @@ function runningWithArguments(target, inputPath) {
 
   Log.info('Running with arguments ⚡\n');
   Log.info(`Target: ${target} 🎯`);
-  Log.info(`Input Sets: input-sets/${target}/${inputPath}.json 📄\n`);
+  Log.info(`Input Sets: cores/input-sets/${target}/${inputPath}.json 📄\n`);
 
   const templatePath = `${__dirname}/templates/${target}`;
 
@@ -100,8 +101,14 @@ function runningWithArguments(target, inputPath) {
     const destination = answers['destination'];
     fs.mkdirSync(`${CURR_DIR}/${destination}`);
 
-    // Read the path input-sets/<target>/<input>.json and parse it
-    const data = JSON.parse(fs.readFileSync(`input-sets/${target}/${inputPath}.json`, 'utf8'));
+    // Read the answers cores/input-sets/<target>/<input>.json and parse it
+    const extendAnswers = JSON.parse(
+      fs.readFileSync(`./cores/input-sets/${target}/${inputPath}.json`, 'utf8')
+    );
+
+    const answersStruct = await createAnswerStruct(target, extendAnswers);
+
+    const data = await CreateUserInput.call(target, answersStruct);
 
     messageGeneratingWrap(destination, () => {
       createDirectoryContents(templatePath, destination, data);
