@@ -20,6 +20,7 @@ import { CreateUserInput } from './supports/createUserInput.js';
 import { BaseQuestion } from './questions/base.question.js';
 import { ArgumentParser } from './supports/argumentsParser.js';
 import { messageGeneratingWrap } from './supports/messagesWrap.js';
+import { Log } from './supports/log.js';
 const CHOICES = fs.readdirSync(`${__dirname}/templates`);
 
 const QUESTIONS = [
@@ -76,7 +77,7 @@ async function extendQuestions(templateChoice, callback) {
       callback(answersStruct);
     });
   } catch (_error) {
-    console.info(`No questions found for ${templateChoice}.`);
+    Log.info(`No questions found for ${templateChoice}.`);
 
     callback({});
   }
@@ -89,9 +90,9 @@ function runningWithArguments(target, inputPath) {
     inputPath = inputPath.split('.json')[0];
   }
 
-  console.log('Running with arguments ⚡\n');
-  console.log(`Target: ${target} 🎯`);
-  console.log(`Input Sets: input-sets/${target}/${inputPath}.json 📄\n`);
+  Log.info('Running with arguments ⚡\n');
+  Log.info(`Target: ${target} 🎯`);
+  Log.info(`Input Sets: input-sets/${target}/${inputPath}.json 📄\n`);
 
   const templatePath = `${__dirname}/templates/${target}`;
 

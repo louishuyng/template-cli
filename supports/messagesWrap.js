@@ -1,11 +1,13 @@
+import { Log } from './log.js';
+
 const CURR_DIR = process.cwd();
 
 function messageGeneratingWrap(destination, callback) {
-  console.log('Generating template ⚡\n');
+  Log.info('Generating template ⚡\n');
   callback();
-  console.log('\nTemplate generated 🎉');
-  console.log(`Destination: ${CURR_DIR}/${destination}`);
-  console.log('Happy coding! 🚀');
+  Log.success('\nTemplate generated 🎉');
+  Log.info(`Destination: ${CURR_DIR}/${destination}`);
+  Log.info('Happy coding! 🚀');
 }
 
 export { messageGeneratingWrap };

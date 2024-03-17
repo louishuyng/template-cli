@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import handlebars from 'handlebars';
+import { Log } from './log.js';
 const CURR_DIR = process.cwd();
 
 const templateContents = (contents, data) => {
@@ -25,7 +26,7 @@ const createDirectoryContents = (templatePath, newProjectPath, data) => {
       const writePath = `${CURR_DIR}/${newProjectPath}/${file}`;
 
       fs.writeFileSync(writePath, contents, 'utf8');
-      console.log(`Created ${CURR_DIR}/${newProjectPath}/${file} 💾`);
+      Log.success(`Created ${CURR_DIR}/${newProjectPath}/${file} 💾`);
     } else if (stats.isDirectory()) {
       fs.mkdirSync(`${CURR_DIR}/${newProjectPath}/${file}`);
 

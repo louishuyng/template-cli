@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { Log } from './log.js';
 
 class ArgumentParser {
   static call(dirname) {
@@ -15,13 +16,11 @@ class ArgumentParser {
     const CHOICES = fs.readdirSync(`${dirname}/templates`);
 
     if (!CHOICES.includes(target)) {
-      console.error(`Template ${target} is not supported. Please check again in folder templates`);
-      process.exit(1);
+      Log.error(`Template ${target} is not supported. Please check again in folder templates`);
     }
 
     if (inputIndex === -1) {
-      console.error('Input is required. Please set input with --input=your-input');
-      process.exit(1);
+      Log.error('Input is required. Please set input with --input=your-input');
     }
 
     const input = process.argv[inputIndex].split('=')[1];

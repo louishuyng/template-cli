@@ -1,3 +1,5 @@
+import { Log } from './log.js';
+
 export class CreateUserInput {
   static async call(templateChoice, answers) {
     const generateDataPath = `../structs/${templateChoice}/handleBar.js`;
@@ -6,10 +8,9 @@ export class CreateUserInput {
       const { default: generateData } = await import(generateDataPath);
       return generateData(answers);
     } catch (_error) {
-      console.error(
+      Log.error(
         `No generateData function found for ${this.templateChoice}. Please create one in ${generateDataPath}`
       );
-      process.exit(1);
     }
   }
 }
