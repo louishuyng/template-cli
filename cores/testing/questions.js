@@ -1,4 +1,4 @@
-const NewMicroServiceQuestion = [
+export default [
   {
     name: 'service-name',
     type: 'input',
@@ -9,5 +9,3 @@ const NewMicroServiceQuestion = [
     },
   },
 ];
-
-export default NewMicroServiceQuestion;

@@ -28,26 +28,26 @@ For example:
 template-cli new-micro-service --input test
 ```
 
-- `<input>` is the name of input-set located in `cores/input-sets/<template-name>/<input>.json`
+- `<input>` is the name of input-set located in `cores/<template-name>/sets/<input>.json`
 
 ## Extending New Templates
 
 To add a new template, add a new folder in the `templates` directory. Then when you run the CLI, you will be prompted to select the template you want to use.
 > This will be a <template-name> during the creation of the template
 
-To make the template work, you will need to do the following:
+To make the template work, you will need to do the following: (Can rerfer to the `cores/testing` for an example)
 
 1. [Create list of questions to ask the user for the new template (optional)](#1-create-list-of-questions)
 2. [Create a struct to hold the answers to the questions (required)](#2-create-a-struct-to-hold-the-answers-to-the-questions)
 3. [Inside template you can replace the placeholders with the answers from the struct (required)](#3-inside-template-you-can-replace-the-placeholders-with-the-answers-from-the-struct)
 
 ### 1. Create list of questions
-Create a new file in the `cores/questions/<template-name>/index.js` file. The file should default export an array of questions.
+Create a new file in the `cores/<template-name>/questions.js` file. The file should default export an array of questions.
 
 For example:
-`cores/questions/new-micro-service/index.js`
+`cores/testing/questions.js`
 ```javascript
-const NewMicroServiceQuestion = [
+export default [
   {
     name: 'service-name',
     type: 'input',
@@ -58,19 +58,17 @@ const NewMicroServiceQuestion = [
     },
   },
 ];
-
-export default NewMicroServiceQuestion;
 ```
 
 ### 2. Create a struct to hold the answers to the questions
 
-#### Firstly, create an **answer struct** in the `cores/structs/<template-name>/answers.js` file.
+#### Firstly, create an **answer struct** in the `cores/<template-name>/answers.js` file.
 > Purpose of this struct is to hold the answers in a structured way.
 
 Example of the struct is shown below.
-`cores/structs/new-micro-service/answers.js`
+`cores/testing/answers.js`
 ```javascript
-class Answers {
+export default class Answers {
   constructor(answers = {}) {
     this.answers = answers;
   }
@@ -79,24 +77,20 @@ class Answers {
     return this.answers['service-name'];
   }
 }
-
-export default Answers;
 ```
 
 
-#### Secondly, create a **handleBar function** in the `cores/structs/<template-name>/handleBar.js` file.
+#### Secondly, create a **toObj function** in the `cores/<template-name>/toObj.js` file.
 > Purpose of this function is to map the answers struct to json that handlebars can use.
 
 Example of the generateData function is shown below.
-`cores/structs/new-micro-service/handleBar.js`
+`cores/testing/toObj.js`
 ```javascript
-function generateData(answers) {
+export default function (answers) {
   return {
     name: answers.serviceName,
   };
 }
-
-export default generateData;
 ```
 
 ### 3. Inside template you can replace the placeholders with the answers from the struct
@@ -105,9 +99,5 @@ export default generateData;
 Use handlebars placeholders to replace the data generated from the struct in [previous step.](#secondly-create-a-generatedata-function-in-the-structstemplate-namegeneratedatajs-file)
 
 ```javascript
-class {{name}} { // This will be replaced by handlebars
-  constructor() {
-    console.log('Hello from {{name}}');
-  }
-}
+console.log('Hello World! {{name}}');
 ```

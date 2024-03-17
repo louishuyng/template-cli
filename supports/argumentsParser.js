@@ -3,20 +3,22 @@ import { Log } from './log.js';
 
 class ArgumentParser {
   static call(dirname) {
-    const target = process.argv[2];
+    const templateChoice = process.argv[2];
     const inputIndex = process.argv.findIndex(arg => arg.includes('--input='));
 
-    if (!target) {
+    if (!templateChoice) {
       return {
-        target: null,
+        templateChoice: null,
       };
     }
 
-    // Check if target is support in the templates or not
+    // Check if templateChoice is support in the templates or not
     const CHOICES = fs.readdirSync(`${dirname}/templates`);
 
-    if (!CHOICES.includes(target)) {
-      Log.error(`Template ${target} is not supported. Please check again in folder templates`);
+    if (!CHOICES.includes(templateChoice)) {
+      Log.error(
+        `Template ${templateChoice} is not supported. Please check again in folder templates`
+      );
     }
 
     if (inputIndex === -1) {
@@ -25,7 +27,7 @@ class ArgumentParser {
 
     const input = process.argv[inputIndex].split('=')[1];
 
-    return { target, input };
+    return { templateChoice, input };
   }
 }
 

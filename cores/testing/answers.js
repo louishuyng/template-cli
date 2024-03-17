@@ -1,4 +1,4 @@
-class Answers {
+export default class Answers {
   constructor(answers = {}) {
     this.answers = answers;
   }
@@ -7,5 +7,3 @@ class Answers {
     return this.answers['service-name'];
   }
 }
-
-export default Answers;

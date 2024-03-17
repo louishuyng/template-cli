@@ -19,11 +19,15 @@ import { Log } from './supports/log.js';
 // STRUCTS
 import { CreateUserInput } from './supports/createUserInput.js';
 
-// QUESTIONS
-import { BaseQuestion } from './cores/questions/base.question.js';
-
 const CHOICES = fs.readdirSync(`${__dirname}/templates`);
 
+const BASE_QUESTIONS = [
+  {
+    name: 'destination',
+    type: 'input',
+    message: 'Project Destination:',
+  },
+];
 const QUESTIONS = [
   {
     name: 'template-choice',
@@ -31,16 +35,16 @@ const QUESTIONS = [
     message: 'What template would you like to generate?',
     choices: CHOICES,
   },
-  ...BaseQuestion,
+  ...BASE_QUESTIONS,
 ];
 
-const WITHOUT_ARGUMENTS_QUESTION = BaseQuestion;
+const WITHOUT_ARGUMENTS_QUESTION = BASE_QUESTIONS;
 
 function main() {
-  const { target, input } = ArgumentParser.call(__dirname);
+  const { templateChoice, input } = ArgumentParser.call(__dirname);
 
-  if (target) {
-    runningWithArguments(target, input);
+  if (templateChoice) {
+    runningWithArguments(templateChoice, input);
   } else {
     runningWithoutArguments();
   }
@@ -67,7 +71,7 @@ function runningWithoutArguments() {
 
 async function extendQuestions(templateChoice, callback) {
   try {
-    const questionsPath = `./cores/questions/${templateChoice}/index.js`;
+    const questionsPath = `./cores/${templateChoice}/questions.js`;
 
     const { default: questionsForTemplate } = await import(questionsPath);
 
@@ -84,7 +88,7 @@ async function extendQuestions(templateChoice, callback) {
   }
 }
 
-function runningWithArguments(target, inputPath) {
+function runningWithArguments(templateChoice, inputPath) {
   // Remove .json from inputPath
   // We accept inputPath with or without .json
   if (inputPath.includes('.json')) {
@@ -92,10 +96,10 @@ function runningWithArguments(target, inputPath) {
   }
 
   Log.info('Running with arguments ⚡\n');
-  Log.info(`Target: ${target} 🎯`);
-  Log.info(`Input Sets: cores/input-sets/${target}/${inputPath}.json 📄\n`);
+  Log.info(`Target: ${templateChoice} 🎯`);
+  Log.info(`Input Sets: cores/${templateChoice}/sets/${inputPath}.json 📄\n`);
 
-  const templatePath = `${__dirname}/templates/${target}`;
+  const templatePath = `${__dirname}/templates/${templateChoice}`;
 
   inquirer.prompt(WITHOUT_ARGUMENTS_QUESTION).then(async answers => {
     const destination = answers['destination'];
@@ -103,12 +107,12 @@ function runningWithArguments(target, inputPath) {
 
     // Read the answers cores/input-sets/<target>/<input>.json and parse it
     const extendAnswers = JSON.parse(
-      fs.readFileSync(`./cores/input-sets/${target}/${inputPath}.json`, 'utf8')
+      fs.readFileSync(`./cores/${templateChoice}/sets/${inputPath}.json`, 'utf8')
     );
 
-    const answersStruct = await createAnswerStruct(target, extendAnswers);
+    const answersStruct = await createAnswerStruct(templateChoice, extendAnswers);
 
-    const data = await CreateUserInput.call(target, answersStruct);
+    const data = await CreateUserInput.call(templateChoice, answersStruct);
 
     messageGeneratingWrap(destination, () => {
       createDirectoryContents(templatePath, destination, data);

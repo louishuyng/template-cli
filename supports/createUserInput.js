@@ -2,7 +2,7 @@ import { Log } from './log.js';
 
 export class CreateUserInput {
   static async call(templateChoice, answers) {
-    const generateDataPath = `../cores/structs/${templateChoice}/handleBar.js`;
+    const generateDataPath = `../cores/${templateChoice}/toObj.js`;
 
     try {
       const { default: generateData } = await import(generateDataPath);
