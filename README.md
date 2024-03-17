@@ -29,10 +29,10 @@ To make the template work, you will need to do the following:
 3. [Inside template you can replace the placeholders with the answers from the struct (required)](#3-inside-template-you-can-replace-the-placeholders-with-the-answers-from-the-struct)
 
 ### 1. Create list of questions
-Create a new file in the `questions/<template-name>.questions.js` file. The file should default export an array of questions.
+Create a new file in the `questions/<template-name>/index.js` file. The file should default export an array of questions.
 
 For example:
-`questions/new-micro-service.questions.js`
+`questions/new-micro-service/index.js`
 ```javascript
 const NewMicroServiceQuestion = [
   {
@@ -71,11 +71,11 @@ export default Answers;
 ```
 
 
-#### Secondly, create a **generateData function** in the `structs/<template-name>/generateData.js` file.
+#### Secondly, create a **handleBar function** in the `structs/<template-name>/handleBar.js` file.
 > Purpose of this function is to map the answers struct to json that handlebars can use.
 
 Example of the generateData function is shown below.
-`structs/new-micro-service/generateData.js`
+`structs/new-micro-service/handleBar.js`
 ```javascript
 function generateData(answers) {
   return {

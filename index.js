@@ -14,7 +14,7 @@ import createDirectoryContents from './supports/createDirectoryContents.js';
 import { createAnswerStruct } from './supports/createAnswerStruct.js';
 
 // STRUCTS
-import { UserInput } from './structs/userInput.js';
+import { CreateUserInput } from './supports/createUserInput.js';
 
 // QUESTIONS
 import { BaseQuestion } from './questions/base.question.js';
@@ -37,8 +37,7 @@ inquirer.prompt(QUESTIONS).then(answers => {
   fs.mkdirSync(`${CURR_DIR}/${destination}`);
 
   extendQuestions(templateChoice, async answers => {
-    const userInput = new UserInput(templateChoice, answers);
-    const data = await userInput.data();
+    const data = await CreateUserInput.call(templateChoice, answers);
 
     console.log('Generating template ⚡\n');
     createDirectoryContents(templatePath, destination, data);
@@ -50,7 +49,7 @@ inquirer.prompt(QUESTIONS).then(answers => {
 
 async function extendQuestions(templateChoice, callback) {
   try {
-    const questionsPath = `./questions/${templateChoice}.question.js`;
+    const questionsPath = `./questions/${templateChoice}/index.js`;
 
     const { default: questionsForTemplate } = await import(questionsPath);
 
