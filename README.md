@@ -1,3 +1,69 @@
+# Table of Contents
+- [Description](#description)
+- [Motivation](#motivation)
+- [Structure](#structure)
+  - [Core Details](#core-details)
+  - [Template Example](#template-example)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Customization](#customization)
+  - [1. Create list of questions](#1-create-list-of-questions)
+  - [2. Create a struct to hold the answers to the questions](#2-create-a-struct-to-hold-the-answers-to-the-questions)
+  - [3. Templating file](#3-templating-file)
+
+## Description
+This is a CLI tool that allows you to generate code from a predefined template.
+
+It will help you or your team to manage all the templates in one place 🗄️ and generate when needed 🔨.
+
+## Motivation
+As a developer, you might have to create the same code or configuration files multiple times with different constants or variables
+
+And each time you have to copy and paste the same code and replace some constants or variables there and it is time-consuming 🕒
+
+You can optimize this process by just doing two things
+1. Create a template for that repetitive code or configuration files 📝
+2. Run the CLI tool and select the template and input-set. It will generate the code for you. 🚀
+
+Following these below instructions, you can create a new template and use the CLI tool to generate the code.
+
+## Structure
+```bash
+cores/
+├── aws-serverless/ # Core setup for template AWS Serverless
+└── microservice/ # Core setup for template Microservice
+templates/ # (Team will add more templates)
+├── aws-serverless/ # Template for AWS Serverless
+│   ├── index.ts
+│   ├── client.ts
+│   └── server.ts
+└── microservice/ # Template for Microservice
+    ├── modules/
+    ├── routes/
+    └── app.ts
+```
+
+### Core Details
+Here is the structure of the core setup for an AWS Serverless template
+**Note**: You dont have to name the core setup as `aws-serverless`, name it as per your template name
+
+```bash
+cores/
+└── aws-serverless/
+    ├── sets/ # Set of inputs for the template
+    │   ├── input1.json # Input set 1
+    │   └── input2.json # Input set 2
+    ├── questions.js # List of questions to ask the user
+    ├── answers.js # Struct to hold the answers to the questions
+    └── toObject.js # Convert answers struct to input-set for handlebars
+```
+
+### Template Example
+```javascript
+console.log('Hello World! {{name}}'); # {{name}} will be replaced with the input-set
+```
+
 ## Requirements
 Node.js 18.10.0 or any version that supports ES6.
 
@@ -5,32 +71,27 @@ Node.js 18.10.0 or any version that supports ES6.
 ```bash
 yarn
 ```
-
-## Usage
-To install the CLI globally, run the following command:
+After installing the dependencies, you can install the CLI tool globally using the following command:
 ```bash
 npm install -g
 ```
- 
-### Without Arguments
-To run the CLI, run the following command:
-```bash
-template-cli
-```
-### With Arguments
+
+## Usage
 To run the CLI with arguments, run the following command:
 ```
 template-cli <template-name> --input <input>
 ```
 
-For example:
-```bash
-template-cli new-micro-service --input test
-```
-
 - `<input>` is the name of input-set located in `cores/<template-name>/sets/<input>.json`
 
-## Extending New Templates
+You can run the CLI without arguments and you will be prompted to select the template and input-set.
+```bash
+template-cli
+```
+
+## Customization
+
+> Add a new template to the CLI tool.
 
 To add a new template, add a new folder in the `templates` directory. Then when you run the CLI, you will be prompted to select the template you want to use.
 > This will be a <template-name> during the creation of the template
@@ -39,7 +100,7 @@ To make the template work, you will need to do the following: (Can rerfer to the
 
 1. [Create list of questions to ask the user for the new template (optional)](#1-create-list-of-questions)
 2. [Create a struct to hold the answers to the questions (required)](#2-create-a-struct-to-hold-the-answers-to-the-questions)
-3. [Inside template you can replace the placeholders with the answers from the struct (required)](#3-inside-template-you-can-replace-the-placeholders-with-the-answers-from-the-struct)
+3. [Templating File](#3-templating-file)
 
 ### 1. Create list of questions
 Create a new file in the `cores/<template-name>/questions.js` file. The file should default export an array of questions.
@@ -59,6 +120,8 @@ export default [
   },
 ];
 ```
+
+How to define a question: Read [here](https://github.com/SBoudrias/Inquirer.js/blob/master/packages/inquirer/README.md#question)
 
 ### 2. Create a struct to hold the answers to the questions
 
@@ -93,8 +156,7 @@ export default function (answers) {
 }
 ```
 
-### 3. Inside template you can replace the placeholders with the answers from the struct
-
+### 3. Templating file
 
 Use handlebars placeholders to replace the data generated from the struct in [previous step.](#secondly-create-a-generatedata-function-in-the-structstemplate-namegeneratedatajs-file)
 
