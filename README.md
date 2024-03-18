@@ -12,7 +12,8 @@
 
 ## Demo
 
-https://github.com/louishuyng/template-cli/assets/40130936/572e8fb9-a82b-4287-81d6-04dcc58c3a97
+https://github.com/louishuyng/template-cli/assets/40130936/aa910af4-c24f-46b0-b56d-2b1cd8d6055c
+
 
 
 ## Description
