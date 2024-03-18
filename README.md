@@ -98,8 +98,8 @@ To add a new template, add a new folder in the `templates` directory. Then when 
 
 To make the template work, you will need to do the following: (Can rerfer to the `cores/testing` for an example)
 
-1. [Create list of questions to ask the user for the new template (optional)](#1-create-list-of-questions)
-2. [Create a struct to hold the answers to the questions (required)](#2-create-a-struct-to-hold-the-answers-to-the-questions)
+1. [Create list of questions to ask the user for the new template (required)](#1-create-list-of-questions)
+2. [Create a struct to hold the answers to the questions (optional)](#2-create-a-struct-to-hold-the-answers-to-the-questions)
 3. [Templating File](#3-templating-file)
 
 ### 1. Create list of questions
@@ -124,6 +124,8 @@ export default [
 How to define a question: Read [here](https://github.com/SBoudrias/Inquirer.js/blob/master/packages/inquirer/README.md#question)
 
 ### 2. Create a struct to hold the answers to the questions
+
+We can skip this step if we don't want to use a struct to modify the answers data.
 
 #### Firstly, create an **answer struct** in the `cores/<template-name>/answers.js` file.
 > Purpose of this struct is to hold the answers in a structured way.
@@ -158,7 +160,11 @@ export default function (answers) {
 
 ### 3. Templating file
 
-Use handlebars placeholders to replace the data generated from the struct in [previous step.](#secondly-create-a-generatedata-function-in-the-structstemplate-namegeneratedatajs-file)
+We can use a json data generated from the answers struct to replace the variables in the templating file.
+
+> See on previous step how to create a struct and a function to convert the struct to json. [previous step.](#secondly-create-a-generatedata-function-in-the-structstemplate-namegeneratedatajs-file)
+
+Or if we skip the previous step, we can use the input-set or questions directly to replace the variables in the templating file.
 
 ```javascript
 console.log('Hello World! {{name}}');

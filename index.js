@@ -59,8 +59,14 @@ function runningWithoutArguments() {
     const destination = answers['destination'];
     fs.mkdirSync(`${CURR_DIR}/${destination}`);
 
-    extendQuestions(templateChoice, async answersStruct => {
-      const data = await CreateUserInput.call(templateChoice, answersStruct);
+    extendQuestions(templateChoice, async (answersStruct, extendAnswers) => {
+      let data = {};
+
+      if (answersStruct) {
+        data = await CreateUserInput.call(templateChoice, answersStruct);
+      } else {
+        data = extendAnswers;
+      }
 
       messageGeneratingWrap(destination, () => {
         createDirectoryContents(templatePath, destination, data);
@@ -79,7 +85,7 @@ async function extendQuestions(templateChoice, callback) {
       // We want to make answer to be more struct depends on the template
       const answersStruct = await createAnswerStruct(templateChoice, extendAnswers);
 
-      callback(answersStruct);
+      callback(answersStruct, extendAnswers);
     });
   } catch (_error) {
     Log.info(`No questions found for ${templateChoice}.`);
@@ -112,7 +118,13 @@ function runningWithArguments(templateChoice, inputPath) {
 
     const answersStruct = await createAnswerStruct(templateChoice, extendAnswers);
 
-    const data = await CreateUserInput.call(templateChoice, answersStruct);
+    let data = {};
+
+    if (answersStruct) {
+      data = await CreateUserInput.call(templateChoice, answersStruct);
+    } else {
+      data = extendAnswers;
+    }
 
     messageGeneratingWrap(destination, () => {
       createDirectoryContents(templatePath, destination, data);
