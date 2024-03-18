@@ -1,16 +1,14 @@
 # Table of Contents
 - [Description](#description)
 - [Motivation](#motivation)
-- [Structure](#structure)
-  - [Core Details](#core-details)
-  - [Template Example](#template-example)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Customization](#customization)
-  - [1. Create list of questions](#1-create-list-of-questions)
-  - [2. Create a struct to hold the answers to the questions](#2-create-a-struct-to-hold-the-answers-to-the-questions)
-  - [3. Templating file](#3-templating-file)
+- [How to add a new template?](#how-to-add-a-new-template)
+  - [1. `questions.js`](#1-questionsjs)
+  - [2. `answers.js` & `toObj.js`](#2-answersjs--toobjjs)
+  - [3. `sets/`](#3-sets)
+- [What we can do with the templating file?](#what-we-can-do-with-the-templating-file)
 
 ## Description
 This is a CLI tool that allows you to generate code from a predefined template.
@@ -25,39 +23,6 @@ And each time you have to copy and paste the same code and replace some constant
 You can optimize this process by just doing two things
 1. Create a template for that repetitive code or configuration files 📝
 2. Run the CLI tool and select the template and input-set. It will generate the code for you. 🚀
-
-Following these below instructions, you can create a new template and use the CLI tool to generate the code.
-
-## Structure
-```bash
-cores/
-├── aws-serverless/ # Core setup for template AWS Serverless
-└── microservice/ # Core setup for template Microservice
-templates/ # (Team will add more templates)
-├── aws-serverless/ # Template for AWS Serverless
-│   ├── index.ts
-│   ├── client.ts
-│   └── server.ts
-└── microservice/ # Template for Microservice
-    ├── modules/
-    ├── routes/
-    └── app.ts
-```
-
-### Core Details
-Here is the structure of the core setup for an AWS Serverless template
-**Note**: You dont have to name the core setup as `aws-serverless`, name it as per your template name
-
-```bash
-cores/
-└── aws-serverless/
-    ├── sets/ # Set of inputs for the template
-    │   ├── input1.json # Input set 1
-    │   └── input2.json # Input set 2
-    ├── questions.js # List of questions to ask the user
-    ├── answers.js # Struct to hold the answers to the questions
-    └── toObject.js # Convert answers struct to input-set for handlebars
-```
 
 ### Template Example
 ```javascript
@@ -89,20 +54,38 @@ You can run the CLI without arguments and you will be prompted to select the tem
 template-cli
 ```
 
-## Customization
+## How to add a new template?
 
-> Add a new template to the CLI tool.
+To add a new template, add a new folder in the `templates` directory
 
-To add a new template, add a new folder in the `templates` directory. Then when you run the CLI, you will be prompted to select the template you want to use.
-> This will be a <template-name> during the creation of the template
+For example:
+```bash
+templates/
+└── <template-name>/
+    ├── index.ts
+    ├── client.ts
+    └── server.ts
+```
 
-To make the template work, you will need to do the following: (Can rerfer to the `cores/testing` for an example)
+Then add a new core setup for the template in the `cores` directory
+```bash
+cores/
+└── <template-name>/
+    ├── sets/ # (in case we want to run with arguments instead of prompt)
+    │   ├── input1.json
+    │   └── input2.json
+    ├── questions.js # (required)
+    ├── answers.js # (optional)
+    └── toObject.js # (optional)
+```
 
-1. [Create list of questions to ask the user for the new template (required)](#1-create-list-of-questions)
-2. [Create a struct to hold the answers to the questions (optional)](#2-create-a-struct-to-hold-the-answers-to-the-questions)
-3. [Templating File](#3-templating-file)
+Following are the steps to setup a core for a new template:
 
-### 1. Create list of questions
+1. [questions.js](#1-questionsjs)
+2. [answers.js & toObject.js](#2-answersjs--toobjjs)
+3. [sets](#3-sets)
+
+### 1. `questions.js`
 Create a new file in the `cores/<template-name>/questions.js` file. The file should default export an array of questions.
 
 For example:
@@ -123,7 +106,7 @@ export default [
 
 How to define a question: Read [here](https://github.com/SBoudrias/Inquirer.js/blob/master/packages/inquirer/README.md#question)
 
-### 2. Create a struct to hold the answers to the questions
+### 2. `answers.js` & `toObj.js`
 
 We can skip this step if we don't want to use a struct to modify the answers data.
 
@@ -144,6 +127,20 @@ export default class Answers {
 }
 ```
 
+### 3. `sets/`
+
+If we want to run the CLI with arguments instead of prompt, we can create a set of input-sets.
+
+Create a new file in the `cores/<template-name>/sets` directory. The file should contain the input-set in json format.
+
+For example:
+`cores/testing/sets/input1.json`
+```json
+{
+  "service-name": "testing-service"
+}
+```
+
 
 #### Secondly, create a **toObj function** in the `cores/<template-name>/toObj.js` file.
 > Purpose of this function is to map the answers struct to json that handlebars can use.
@@ -158,14 +155,17 @@ export default function (answers) {
 }
 ```
 
-### 3. Templating file
+## What we can do with the templating file?
+> Template file a file that contains the code or configuration file with variables
 
-We can use a json data generated from the answers struct to replace the variables in the templating file.
+The text inside the file will be replaced with the answers struct (that we created in this [optional step](#2-answersjs--toobjjs))
 
-> See on previous step how to create a struct and a function to convert the struct to json. [previous step.](#secondly-create-a-generatedata-function-in-the-structstemplate-namegeneratedatajs-file)
+But if we don't want to use the answers struct, we can directly use the input-set or the answers object.
 
-Or if we skip the previous step, we can use the input-set or questions directly to replace the variables in the templating file.
-
+Example of a template file
+`templates/testing/index.ts`
 ```javascript
 console.log('Hello World! {{name}}');
 ```
+
+The `{{name}}` will be replaced with the input-set or the answers object.
